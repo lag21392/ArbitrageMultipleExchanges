@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 timeSleep=1
 
 def processTreads(symbols,ids,currencys,exchange):
-    n=int(cpu_count())
+    n=int(cpu_count())-1
 
 
     def nCortes(ids,n):
@@ -23,7 +23,7 @@ def processTreads(symbols,ids,currencys,exchange):
             return len(ids)//n
         else:
             return (len(ids)//n) + 1
-    tamanioTramo=nCortes(ids,n)-1
+    tamanioTramo=nCortes(ids,n)
     listasIds=[ids[i:i + tamanioTramo] for i in range(0, len(ids), tamanioTramo)]
     print('TotalTikets: {} TiketsXProcesosMedia: {} CantProcesos: {}'.format(len(ids)*len(symbols), len(ids)*len(symbols)//n,n))
     #Variables compartidas
