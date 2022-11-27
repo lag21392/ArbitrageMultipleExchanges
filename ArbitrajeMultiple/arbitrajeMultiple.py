@@ -23,8 +23,9 @@ def processTreads(symbols,ids,currencys,exchange):
             return len(ids)//n
         else:
             return (len(ids)//n) + 1
-    listasIds=[ids[i:i + n] for i in range(0, len(ids), nCortes(ids,n))]
-    print('TotalTikets: {} TiketsXProcesos: {} CantProcesos: {}'.format(len(ids)*len(symbols), len(listasIds)*len(symbols),n))
+    tamanioTramo=nCortes(ids,n)-1
+    listasIds=[ids[i:i + tamanioTramo] for i in range(0, len(ids), tamanioTramo)]
+    print('TotalTikets: {} TiketsXProcesosMedia: {} CantProcesos: {}'.format(len(ids)*len(symbols), len(ids)*len(symbols)//n,n))
     #Variables compartidas
     mutex_tiketsProcessList = manager.Lock()
     tiketsProcessList = manager.list([])
@@ -85,13 +86,13 @@ async def get_ticker(symbols, id,tiketsProcessList,tiketsProcessDict,mutex_tiket
         mutex_controlTareasEjecutadas.release()
         if not esperar :
             for symbol in symbols:
-                cantidadIntentos=3
+                cantidadIntentos=2
                 while cantidadIntentos>0:
                     try:
                         exchange = getattr(ccxt, id)()
                         t=await exchange.fetch_ticker(symbol)
                         await exchange.close()
-                        if t['close'] != None and t['close'] > 0 and t['baseVolume'] != None and t['baseVolume'] > 0 and t['baseVolume']*t['close']>5000:
+                        if t['close'] != None and t['close'] > 0 and t['baseVolume'] != None and t['baseVolume'] > 0 and t['baseVolume']*t['close']>1000:
                             t['id']=id
                             t['nProcess']=nProcess
                             t['date']=datetime.now()
@@ -102,19 +103,31 @@ async def get_ticker(symbols, id,tiketsProcessList,tiketsProcessDict,mutex_tiket
                             symbols.remove(symbol)
                         cantidadIntentos=0
                     except Exception as e:
-                        await exchange.close()
-                        cantidadIntentos=cantidadIntentos-1
-                        await sleep(15)
+                        
+                        if str(e).find('fetchTicker() is not supported yet')>0 or str(e).find("is not iterable")>0 or str(e).find("error")>0:
+                            cantidadIntentos=0
+                            if symbol in symbols:
+                                symbols.remove(symbol)
+                        else:
+                            print(e)
+                            cantidadIntentos=cantidadIntentos-1
+                            
+                        await exchange.close()                        
+                        
                         #print(f'{e} {symbol}')
                         #symbols.remove(symbol)
                         #removiendo de diccionario general
                         if cantidadIntentos==0:
+                            if symbol in symbols:
+                                symbols.remove(symbol)
                             mutex_tiketsProcessDict.acquire()
                             key=symbol + '_' + id
                             if key in tiketsProcessDict:
                                 tiketsProcessDict.pop(key)
                                 #print(f"Removido {key}")
                             mutex_tiketsProcessDict.release()
+                        else:
+                            await sleep(1)
                         
                         
                         
