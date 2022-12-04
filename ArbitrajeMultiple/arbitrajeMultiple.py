@@ -12,6 +12,7 @@ import pandas as pd
 import networkx as nx
 from datetime import datetime
 import matplotlib.pyplot as plt
+import json
 timeSleep=1
 
 def processTreads(symbols,ids,currencys,exchange):
@@ -78,6 +79,8 @@ def processAsyncs(symbols_e1,ids,nProcess,tiketsProcessList,tiketsProcessDict,mu
 
 async def get_ticker(symbols, id,tiketsProcessList,tiketsProcessDict,mutex_tiketsProcessList,mutex_tiketsProcessDict,controlTareasEjecutadas,mutex_controlTareasEjecutadas,nProcess):
     while 1:
+        with open('config.json', 'r') as f:
+            volumen = json.load(f)["volumen"]
         mutex_controlTareasEjecutadas.acquire()
         try:
             esperar=controlTareasEjecutadas.get('tareaExtraccion_'+str(nProcess))
@@ -92,7 +95,7 @@ async def get_ticker(symbols, id,tiketsProcessList,tiketsProcessDict,mutex_tiket
                         exchange = getattr(ccxt, id)()
                         t=await exchange.fetch_ticker(symbol)
                         await exchange.close()
-                        if t['close'] != None and t['close'] > 0 and t['baseVolume'] != None and t['baseVolume'] > 0 and t['baseVolume']*t['close']>1000:
+                        if t['close'] != None and t['close'] > 0 and t['baseVolume'] != None and t['baseVolume'] > 0 and t['baseVolume']*t['close']>volumen:
                             t['id']=id
                             t['nProcess']=nProcess
                             t['date']=datetime.now()
@@ -118,8 +121,8 @@ async def get_ticker(symbols, id,tiketsProcessList,tiketsProcessDict,mutex_tiket
                         #symbols.remove(symbol)
                         #removiendo de diccionario general
                         if cantidadIntentos==0:
-                            if symbol in symbols:
-                                symbols.remove(symbol)
+                            #if symbol in symbols:
+                            #    symbols.remove(symbol)
                             mutex_tiketsProcessDict.acquire()
                             key=symbol + '_' + id
                             if key in tiketsProcessDict:
