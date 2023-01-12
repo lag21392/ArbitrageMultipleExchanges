@@ -79,7 +79,7 @@ def processAsyncs(symbols_e1,ids,nProcess,tiketsProcessList,tiketsProcessDict,mu
 
 async def get_ticker(symbols, id,tiketsProcessList,tiketsProcessDict,mutex_tiketsProcessList,mutex_tiketsProcessDict,controlTareasEjecutadas,mutex_controlTareasEjecutadas,nProcess):
     while 1:
-        with open('config.json', 'r') as f:
+        with open('ArbitrajeMultiple\\config.json', 'r') as f:
             volumen = json.load(f)["volumen"]
         mutex_controlTareasEjecutadas.acquire()
         try:
@@ -287,8 +287,8 @@ def mostrar_camino(g,conjuntoCaminos):
                 df_new = pd.DataFrame(d)
                 df=pd.concat([df,df_new],axis=0).reset_index(drop=True)
         print(df)
-        df.to_csv('output.csv',index=False)
-        df.to_json('output.json',orient="split")
+        df.to_csv('ArbitrajeMultiple\\output.csv',index=False)
+        df.to_json('ArbitrajeMultiple\\output.json',orient="split")
     conjuntoCaminosMejorado.sort(key=lambda camino: camino[-1][2],reverse=True)
     prinCamino(conjuntoCaminosMejorado,g)
 

@@ -2,8 +2,8 @@ const express = require('express');
 const app = express();
 const router = express.Router();
 const fs = require("fs");
-const path = __dirname + '/views/';
-const pathArbitrajes = __dirname + '/ArbitrajeMultiple/';
+const path = __dirname + '\\views\\';
+const pathArbitrajes = __dirname + '\\ArbitrajeMultiple\\';
 const port = 8080;
 
 router.use(function (req,res,next) {
