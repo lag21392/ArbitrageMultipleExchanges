@@ -17,5 +17,5 @@ node app.js
 pip install -r requerimientos.txt
 python .\ArbitrajeMultiple\arbitrajeMultiple.py 
 <h2>Imagenes</h2>
-![Alt text](https://github.com/lag21392/ArbitrageMultipleExchanges/blob/main/images/1.jpg)
-![Alt text](https://github.com/lag21392/ArbitrageMultipleExchanges/blob/main/images/2.jpg)
+![Principal](https://raw.github.com/lag21392/ArbitrageMultipleExchanges/blob/main/images/1.jpg)
+![Tabla de Arbitrajes](https://raw.github.com/lag21392/ArbitrageMultipleExchanges/blob/main/images/2.jpg)
