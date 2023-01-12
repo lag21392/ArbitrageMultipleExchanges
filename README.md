@@ -12,7 +12,7 @@ Es importante mencionar que el Arbitraje en los mercados financieros conlleva a 
 
 <h3>Consola 1</h3>
 
-npm init
+npm install
 
 npm audit fix
 
